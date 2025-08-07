@@ -49,6 +49,7 @@ public class StudentController {
        studentService.enroll(studentId, courseId);
        return ResponseEntity.ok().build();
    }
+
    @GetMapping("/{studentId}/courses")
     public List<Course> getCourses (@PathVariable String studentId){
        return studentService.getCourses(studentId);
