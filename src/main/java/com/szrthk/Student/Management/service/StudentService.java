@@ -1,69 +1,105 @@
 package com.szrthk.Student.Management.service;
+
 import com.szrthk.Student.Management.entity.Course;
 import com.szrthk.Student.Management.entity.Student;
-
 import com.szrthk.Student.Management.repositery.CourseRepo;
 import com.szrthk.Student.Management.repositery.ResourceNotFoundException;
 import com.szrthk.Student.Management.repositery.StudentRepo;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
-import java.util.Optional;
+
 @Service
 public class StudentService {
-    private StudentRepo studentRepo;
-    private CourseRepo courseRepo;
+    private final StudentRepo studentRepo;
+    private final CourseRepo courseRepo;
 
     public StudentService(StudentRepo studentRepo, CourseRepo courseRepo){
         this.studentRepo = studentRepo;
         this.courseRepo = courseRepo;
     }
 
-    public Student create(Student student){
-        return studentRepo.save(student);
-    }
-    public Student getStudent(String id){
-        return studentRepo.findById(id)
+    // ✅ use rollNumber consistently from here
+    public Student getStudent(String rollNumber){
+        Student student = studentRepo.findByRollNumber(rollNumber)
                 .orElseThrow(() -> new ResourceNotFoundException("Student not found"));
+        populateCourses(student);
+        return student;
     }
-    public Student updateStudent (String id, Student updated){
-        Student existing = getStudent(id);
+
+    public Student updateStudent(String rollNumber, Student updated){
+        Student existing = getStudent(rollNumber);
         existing.setName(updated.getName());
         existing.setAge(updated.getAge());
         existing.setEmail(updated.getEmail());
         return studentRepo.save(existing);
     }
-    public void delete (String id){
-        studentRepo.deleteById(id);
+
+    public void delete(String rollNumber){
+        if (!studentRepo.existsByRollNumber(rollNumber)) {
+            throw new ResourceNotFoundException("Student not found");
+        }
+        studentRepo.deleteByRollNumber(rollNumber);
     }
-    public void enroll (String studentId, String courseId){
-        Student student =  getStudent(studentId);
-        Course course =  courseRepo.findById(courseId)
+
+    public void deleteAllStudents(){
+        studentRepo.deleteAll();
+    }
+
+    public void enroll(String rollNumber, String courseId){
+        Student student = getStudent(rollNumber);
+        Course course = courseRepo.findById(courseId)
                 .orElseThrow(() -> new ResourceNotFoundException("Course not found"));
         student.getCourseIds().add(course.getId());
         studentRepo.save(student);
     }
-    public List<Course> getCourses(String studentId) {
-        Student student = getStudent(studentId);
+
+    // New method to enroll using course code
+    public void enrollByCourseCode(String rollNumber, String courseCode){
+        Student student = getStudent(rollNumber);
+        Course course = courseRepo.findByCode(courseCode)
+                .orElseThrow(() -> new ResourceNotFoundException("Course with code " + courseCode + " not found"));
+        student.getCourseIds().add(course.getId());
+        studentRepo.save(student);
+    }
+
+    public List<Course> getCourses(String rollNumber) {
+        Student student = getStudent(rollNumber);
         return courseRepo.findAllById(student.getCourseIds());
     }
+
     public List<Student> getAllStudents() {
-        return studentRepo.findAll();
+        List<Student> students = studentRepo.findAll();
+        students.forEach(this::populateCourses);
+        return students;
     }
-    public  List<Course> getAllCourses(){
-        return courseRepo.findAll();
+
+    private void populateCourses(Student student) {
+        if (!student.getCourseIds().isEmpty()) {
+            List<Course> courses = courseRepo.findAllById(student.getCourseIds());
+            student.setCourses(courses);
+        }
     }
+
     public Course updateCourse(String id, Course updated){
         Course existing = courseRepo.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Course not found"));
         existing.setTitle(updated.getTitle());
         return courseRepo.save(existing);
     }
+
     public void deleteCourse(String id){
         courseRepo.deleteById(id);
     }
 
+    public void deleteAllCourses(){
+        courseRepo.deleteAll();
+    }
 
+    public Student create(Student student) {
+        long count = studentRepo.count();
+        String rollNumber = "STU" + String.format("%03d", count + 1);
+        student.setRollNumber(rollNumber);
+        return studentRepo.save(student);
+    }
 }
-

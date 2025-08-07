@@ -5,7 +5,6 @@ import com.szrthk.Student.Management.entity.Course;
 import com.szrthk.Student.Management.entity.Student;
 import com.szrthk.Student.Management.service.StudentService;
 import jakarta.validation.Valid;
-import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,7 +15,7 @@ import java.util.List;
 @RequestMapping("/students")
 public class StudentController {
     
-    private final StudentService studentService;
+    private  StudentService studentService;
 
 
    public StudentController(StudentService studentService){
@@ -31,29 +30,45 @@ public class StudentController {
         List<Student> students = studentService.getAllStudents();
         return ResponseEntity.ok(students);
     }
-   @GetMapping("/{id}")
-   public Student get(@PathVariable String id){
-       return studentService.getStudent(id);
+   @GetMapping("/{rollNumber}")
+   public Student get(@PathVariable String rollNumber){
+       return studentService.getStudent(rollNumber);
    }
-   @PutMapping("/{id}")
-    public Student update (@PathVariable String id, @RequestBody Student student){
-       return studentService.updateStudent(id, student);
+   @PutMapping("/{rollNumber}")
+    public Student update (@PathVariable String rollNumber, @RequestBody Student student){
+       return studentService.updateStudent(rollNumber, student);
    }
-   @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable String id){
-       studentService.delete(id);
+   @DeleteMapping("/{rollNumber}")
+    public ResponseEntity<Void> delete(@PathVariable String rollNumber){
+       studentService.delete(rollNumber);
        return ResponseEntity.noContent().build();
    }
-   @PostMapping("/{studentId}/courses/{courseId}")
-    public ResponseEntity<Void> enroll(@PathVariable String studentId, @PathVariable String courseId){
-       studentService.enroll(studentId, courseId);
+   
+   // Delete all students
+   @DeleteMapping
+   public ResponseEntity<Void> deleteAllStudents(){
+       studentService.deleteAllStudents();
+       return ResponseEntity.noContent().build();
+   }
+   
+   @PostMapping("/{rollNumber}/courses/{courseId}")
+    public ResponseEntity<Void> enroll(@PathVariable String rollNumber, @PathVariable String courseId){
+       studentService.enroll(rollNumber, courseId);
        return ResponseEntity.ok().build();
    }
 
-   @GetMapping("/{studentId}/courses")
-    public List<Course> getCourses (@PathVariable String studentId){
-       return studentService.getCourses(studentId);
+   // New endpoint to enroll using course code
+   @PostMapping("/{rollNumber}/courses/code/{courseCode}")
+    public ResponseEntity<Void> enrollByCourseCode(@PathVariable String rollNumber, @PathVariable String courseCode){
+       studentService.enrollByCourseCode(rollNumber, courseCode);
+       return ResponseEntity.ok().build();
    }
+
+   @GetMapping("/{rollNumber}/courses")
+    public List<Course> getCourses (@PathVariable String rollNumber){
+       return studentService.getCourses(rollNumber);
+   }
+
 
 
 
