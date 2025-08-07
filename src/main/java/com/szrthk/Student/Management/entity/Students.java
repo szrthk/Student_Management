@@ -6,7 +6,6 @@ import java.util.HashSet;
 
 import org.springframework.data.annotation.Id;
 import jakarta.validation.constraints.*;
-import lombok.Data;
 import java.util.Set;
 
 
@@ -25,6 +24,7 @@ public class Students {
     @Min(value = 18, message = "Age must be at least 18")
     private int age;
 
+    @SuppressWarnings("unused")
     private Set<String> courseIds = new HashSet<>();
 
 }
