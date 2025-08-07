@@ -48,6 +48,9 @@ public class StudentService {
         Student student = getStudent(studentId);
         return courseRepo.findAllById(student.getCourseIds());
     }
+    public List<Student> getAllStudents() {
+        return studentRepo.findAll();
+    }
 
 }
 

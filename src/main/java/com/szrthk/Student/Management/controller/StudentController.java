@@ -26,6 +26,11 @@ public class StudentController {
    public ResponseEntity<Student> create (@Valid @RequestBody Student student){
        return ResponseEntity.ok(studentService.create(student));
    }
+    @GetMapping
+    public ResponseEntity<List<Student>> getAllStudents() {
+        List<Student> students = studentService.getAllStudents();
+        return ResponseEntity.ok(students);
+    }
    @GetMapping("/{id}")
    public Student get(@PathVariable String id){
        return studentService.getStudent(id);
@@ -39,7 +44,7 @@ public class StudentController {
        studentService.delete(id);
        return ResponseEntity.noContent().build();
    }
-   @PostMapping
+   @PostMapping("/{studentId}/courses/{courseId}")
     public ResponseEntity<Void> enroll(@PathVariable String studentId, @PathVariable String courseId){
        studentService.enroll(studentId, courseId);
        return ResponseEntity.ok().build();
