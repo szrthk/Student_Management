@@ -51,6 +51,18 @@ public class StudentService {
     public List<Student> getAllStudents() {
         return studentRepo.findAll();
     }
+    public  List<Course> getAllCourses(){
+        return courseRepo.findAll();
+    }
+    public Course updateCourse(String id, Course updated){
+        Course existing = courseRepo.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Course not found"));
+        existing.setTitle(updated.getTitle());
+        return courseRepo.save(existing);
+    }
+    public void deleteCourse(String id){
+        courseRepo.deleteById(id);
+    }
 
 }
 
