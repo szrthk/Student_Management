@@ -4,6 +4,9 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 
 import com.szrthk.Student.Management.entity.Course;
 
-public interface CourseRepo extends MongoRepository<Course, String> {
+import java.util.Optional;
 
+public interface CourseRepo extends MongoRepository<Course, String> {
+    Optional<Course> findByCode(String code);
+    boolean existsByCode(String code);
 }

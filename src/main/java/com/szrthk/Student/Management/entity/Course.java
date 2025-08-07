@@ -15,4 +15,7 @@ public class Course {
 
     @NotBlank(message = "Course name is required")
     private String title;
+
+    @NotBlank
+    private String code;
 }
