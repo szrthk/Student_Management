@@ -1,4 +1,5 @@
 package com.szrthk.Student.Management.service;
+import com.szrthk.Student.Management.entity.Course;
 import com.szrthk.Student.Management.entity.Student;
 
 import com.szrthk.Student.Management.repositery.CourseRepo;
@@ -7,6 +8,7 @@ import com.szrthk.Student.Management.repositery.StudentRepo;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import java.util.List;
 import java.util.Optional;
 @Service
 public class StudentService {
@@ -31,6 +33,20 @@ public class StudentService {
         existing.setAge(updated.getAge());
         existing.setEmail(updated.getEmail());
         return studentRepo.save(existing);
+    }
+    public void delete (String id){
+        studentRepo.deleteById(id);
+    }
+    public void enroll (String studentId, String courseId){
+        Student student =  getStudent(studentId);
+        Course course =  courseRepo.findById(courseId)
+                .orElseThrow(() -> new ResourceNotFoundException("Course not found"));
+        student.getCourseIds().add(course.getId());
+        studentRepo.save(student);
+    }
+    public List<Course> getCourses(String studentId) {
+        Student student = getStudent(studentId);
+        return courseRepo.findAllById(student.getCourseIds());
     }
 
 }
