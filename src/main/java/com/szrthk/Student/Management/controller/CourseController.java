@@ -54,4 +54,12 @@ public class CourseController {
         Course saved = courseRepo.save(existing);
         return ResponseEntity.ok(saved);
     }
+    @PutMapping("/code/{code}")
+    public ResponseEntity<Course> updateCourseByCode(@PathVariable String code, @RequestBody Course updatedCourse) {
+        Course existing = courseRepo.findByCode(code)
+                .orElseThrow(() -> new ResourceNotFoundException("Course with code " + code + " not found"));
+        existing.setTitle(updatedCourse.getTitle());
+        Course saved = courseRepo.save(existing);
+        return ResponseEntity.ok(saved);
+    }
 }
