@@ -11,7 +11,6 @@ import org.springframework.data.annotation.Transient;
 import jakarta.validation.constraints.*;
 import java.util.Set;
 import java.util.List;
-import com.szrthk.Student.Management.entity.Course;
 
 @Data
 @Document(collection = "students")
