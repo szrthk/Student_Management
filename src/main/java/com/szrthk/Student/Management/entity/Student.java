@@ -1,5 +1,6 @@
 package com.szrthk.Student.Management.entity;
 
+import lombok.Data;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.HashSet;
@@ -8,9 +9,9 @@ import org.springframework.data.annotation.Id;
 import jakarta.validation.constraints.*;
 import java.util.Set;
 
-
+@Data
 @Document(collection = "students")
-public class Students {
+public class Student {
 
     @Id
     private String id;
