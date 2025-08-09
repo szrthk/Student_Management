@@ -1,311 +1,252 @@
 # Student Management System
 
-A Spring Boot application for managing students and courses with MongoDB as the database.
+A modern REST API built with Spring Boot for managing students and courses in an educational institution.
+
+## 📖 Overview
+
+This application provides a complete CRUD (Create, Read, Update, Delete) system for managing:
+- **Students** with auto-generated roll numbers
+- **Courses** with unique course codes
+- **Enrollment** system linking students to courses
 
 ## 🚀 Features
 
-- **Student Management**: Create, read, update, and delete students
-- **Course Management**: Create, read, update, and delete courses
-- **Enrollment System**: Enroll students in courses using course ID or code
-- **Course Display**: View student details with enrolled course information
-- **Bulk Operations**: Delete all students or courses at once
+- ✅ Student management with validation
+- ✅ Course management with unique codes
+- ✅ Student enrollment in courses
+- ✅ Auto-generated roll numbers (STU001, STU002, etc.)
+- ✅ Find students by name or roll number
+- ✅ Find courses by ID or code
+- ✅ Bulk delete operations
+- ✅ Data validation and error handling
 
-## 🛠️ Technology Stack
+## 🛠️ Tech Stack
 
-- **Backend**: Spring Boot 3.x
-- **Database**: MongoDB
-- **Language**: Java 17+
-- **Build Tool**: Maven
-- **Documentation**: Spring Boot Actuator
+- **Java 17**
+- **Spring Boot 3.5.4**
+- **MongoDB** (NoSQL Database)
+- **Maven** (Build Tool)
+- **Lombok** (Code Generation)
 
-## 📋 Prerequisites
+## 🏃‍♂️ Quick Start
 
-- Java 17 or higher
+### Prerequisites
+- Java 17+
+- MongoDB running on localhost:27017
 - Maven 3.6+
-- MongoDB (local or cloud instance)
 
-## 🚀 Quick Start
-
-### 1. Clone the Repository
+### Run the Application
 ```bash
-git clone <your-repository-url>
+# Clone and navigate to project
+git clone <repository-url>
 cd Student-Management
-```
 
-### 2. Configure MongoDB
-Make sure MongoDB is running on `localhost:27017` or update the connection string in `application.properties`.
-
-### 3. Run the Application
-```bash
+# Run with Maven
 ./mvnw spring-boot:run
 ```
 
-The application will start on `http://localhost:8080`
+The API will be available at `http://localhost:8080`
 
-## 📚 API Documentation
+## 📋 API Endpoints
 
-### Student Endpoints
+### 👨‍🎓 Student Operations
 
-#### Create Student
-```http
-POST /students
-Content-Type: application/json
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/students` | Create a new student |
+| `GET` | `/students` | Get all students |
+| `GET` | `/students/{rollNumber}` | Get student by roll number |
+| `GET` | `/students/name/{name}` | Get student by name |
+| `PUT` | `/students/{rollNumber}` | Update student |
+| `DELETE` | `/students/{rollNumber}` | Delete student |
+| `DELETE` | `/students` | Delete all students |
 
-{
+### 🎓 Course Operations
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/courses` | Create a new course |
+| `GET` | `/courses` | Get all courses |
+| `GET` | `/courses/{id}` | Get course by ID |
+| `GET` | `/courses/code/{code}` | Get course by code |
+| `PUT` | `/courses/{id}` | Update course by ID |
+| `PUT` | `/courses/code/{code}` | Update course by code |
+| `DELETE` | `/courses/{id}` | Delete course by ID |
+| `DELETE` | `/courses/code/{code}` | Delete course by code |
+| `DELETE` | `/courses` | Delete all courses |
+
+### 📚 Enrollment Operations
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/students/{rollNumber}/courses/{courseId}` | Enroll student by course ID |
+| `POST` | `/students/{rollNumber}/courses/code/{courseCode}` | Enroll student by course code |
+| `GET` | `/students/{rollNumber}/courses` | Get student's enrolled courses |
+
+## 💡 Usage Examples
+
+### Create a Student
+```bash
+curl -X POST http://localhost:8080/students \
+  -H "Content-Type: application/json" \
+  -d '{
     "name": "John Doe",
     "email": "john@example.com",
     "age": 20
-}
+  }'
 ```
 
-#### Get All Students
-```http
-GET /students
-```
-
-#### Get Student by Roll Number
-```http
-GET /students/{rollNumber}
-```
-
-#### Update Student
-```http
-PUT /students/{rollNumber}
-Content-Type: application/json
-
-{
-    "name": "John Updated",
-    "email": "john.updated@example.com",
-    "age": 21
-}
-```
-
-#### Delete Student
-```http
-DELETE /students/{rollNumber}
-```
-
-#### Delete All Students
-```http
-DELETE /students
-```
-
-#### Enroll Student in Course (by ID)
-```http
-POST /students/{rollNumber}/courses/{courseId}
-```
-
-#### Enroll Student in Course (by Code)
-```http
-POST /students/{rollNumber}/courses/code/{courseCode}
-```
-
-#### Get Student's Courses
-```http
-GET /students/{rollNumber}/courses
-```
-
-### Course Endpoints
-
-#### Create Course
-```http
-POST /courses
-Content-Type: application/json
-
-{
-    "title": "Computer Science",
-    "code": "CS101"
-}
-```
-
-#### Get All Courses
-```http
-GET /courses
-```
-
-#### Get Course by ID
-```http
-GET /courses/{id}
-```
-
-#### Get Course by Code
-```http
-GET /courses/code/{code}
-```
-
-#### Update Course by ID
-```http
-PUT /courses/{id}
-Content-Type: application/json
-
-{
-    "title": "Advanced Computer Science",
-    "code": "CS101"
-}
-```
-
-#### Update Course by Code
-```http
-PUT /courses/code/{code}
-Content-Type: application/json
-
-{
-    "title": "Computer Science Fundamentals",
-    "code": "CS102"
-}
-```
-
-#### Delete Course by ID
-```http
-DELETE /courses/{id}
-```
-
-#### Delete Course by Code
-```http
-DELETE /courses/code/{code}
-```
-
-#### Delete All Courses
-```http
-DELETE /courses
-```
-
-## 📊 Data Models
-
-### Student Entity
+**Response:**
 ```json
 {
+  "id": "507f1f77bcf86cd799439011",
+  "name": "John Doe",
+  "email": "john@example.com",
+  "age": 20,
+  "rollNumber": "STU001",
+  "courses": []
+}
+```
+
+### Create a Course
+```bash
+curl -X POST http://localhost:8080/courses \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "Computer Science Fundamentals",
+    "code": "CS101"
+  }'
+```
+
+**Response:**
+```json
+{
+  "title": "Computer Science Fundamentals",
+  "code": "CS101"
+}
+```
+
+### Enroll Student in Course
+```bash
+curl -X POST http://localhost:8080/students/STU001/courses/code/CS101
+```
+
+### Get All Students
+```bash
+curl -X GET http://localhost:8080/students
+```
+
+**Response:**
+```json
+[
+  {
     "id": "507f1f77bcf86cd799439011",
     "name": "John Doe",
     "email": "john@example.com",
     "age": 20,
     "rollNumber": "STU001",
     "courses": [
-        {
-            "title": "Computer Science",
-            "code": "CS101"
-        }
+      {
+        "title": "Computer Science Fundamentals",
+        "code": "CS101"
+      }
     ]
+  }
+]
+```
+
+## 📊 Data Models
+
+### Student
+```json
+{
+  "id": "string",
+  "name": "string (required)",
+  "email": "string (valid email required)",
+  "age": "number (minimum 18)",
+  "rollNumber": "string (auto-generated)",
+  "courses": "array (enrolled courses)"
 }
 ```
 
-### Course Entity
+### Course
 ```json
 {
-    "id": "507f1f77bcf86cd799439012",
-    "title": "Computer Science",
-    "code": "CS101"
+  "title": "string (required)",
+  "code": "string (required, unique)"
 }
 ```
+
+## ✅ Validation Rules
+
+### Student Validation
+- **Name**: Required, cannot be blank
+- **Email**: Must be valid email format
+- **Age**: Minimum 18 years old
+
+### Course Validation
+- **Title**: Required, cannot be blank
+- **Code**: Required, must be unique across all courses
 
 ## 🔧 Configuration
 
-### Application Properties
+Default configuration in `application.properties`:
 ```properties
-# MongoDB Configuration
+# MongoDB connection
 spring.data.mongodb.uri=mongodb://localhost:27017/student-management
 
-# Server Configuration
+# Server port
 server.port=8080
-
-# Logging
-logging.level.com.szrthk.Student.Management=DEBUG
 ```
-
-## 🧪 Testing
-
-### Using curl
-
-#### Create a Course
-```bash
-curl -X POST http://localhost:8080/courses \
-  -H "Content-Type: application/json" \
-  -d '{"title": "Computer Science", "code": "CS101"}'
-```
-
-#### Create a Student
-```bash
-curl -X POST http://localhost:8080/students \
-  -H "Content-Type: application/json" \
-  -d '{"name": "John Doe", "email": "john@example.com", "age": 20}'
-```
-
-#### Enroll Student in Course
-```bash
-curl -X POST http://localhost:8080/students/STU001/courses/code/CS101
-```
-
-#### Get All Students
-```bash
-curl -X GET http://localhost:8080/students
-```
-
-## 📁 Project Structure
-
-```
-src/main/java/com/szrthk/Student/Management/
-├── controller/
-│   ├── CourseController.java
-│   ├── StudentController.java
-│   └── healthcheck.java
-├── entity/
-│   ├── Course.java
-│   └── Student.java
-├── repositery/
-│   ├── CourseRepo.java
-│   ├── StudentRepo.java
-│   └── ResourceNotFoundException.java
-├── service/
-│   └── StudentService.java
-└── StudentManagementApplication.java
-```
-
-## 🔍 Key Features Explained
-
-### 1. Auto-generated Roll Numbers
-Students get automatic roll numbers in format `STU001`, `STU002`, etc.
-
-### 2. Course Code Support
-- Create courses with human-readable codes (e.g., "CS101", "MATH101")
-- Enroll students using course codes instead of IDs
-- Update and delete courses by code
-
-### 3. Clean JSON Responses
-- Course IDs are hidden from responses
-- Only course titles and codes are displayed
-- Student course IDs are hidden but functional
-
-### 4. Validation
-- Email validation for students
-- Age validation (minimum 18)
-- Required field validation
-- Duplicate course code prevention
 
 ## 🚨 Error Handling
 
-The application includes comprehensive error handling:
+The API returns appropriate HTTP status codes and error messages:
 
-- **ResourceNotFoundException**: When student/course not found
-- **Validation Errors**: For invalid input data
-- **Duplicate Code Errors**: When course code already exists
+- `400 Bad Request` - Validation errors
+- `404 Not Found` - Resource not found
+- `409 Conflict` - Duplicate course code
+- `500 Internal Server Error` - Server errors
 
-## 🔒 Security Considerations
-
-- Input validation on all endpoints
-- Proper error messages without exposing internal details
-- MongoDB injection protection through Spring Data
-
-## 🚀 Deployment
-
-### Local Development
-```bash
-./mvnw spring-boot:run
+Example error response:
+```json
+{
+  "message": "Course code already exists"
+}
 ```
 
-### Production Build
-```bash
-./mvnw clean package
-java -jar target/Student-Management-0.0.1-SNAPSHOT.jar
+## 🎯 Key Features Explained
+
+### Auto-Generated Roll Numbers
+Students automatically receive roll numbers in the format `STU001`, `STU002`, etc., based on the total count of students.
+
+### Flexible Course Enrollment
+Students can be enrolled in courses using either:
+- Course ID (internal database ID)
+- Course Code (human-readable code like "CS101")
+
+### Clean API Responses
+- Course internal IDs are hidden from responses
+- Students see course titles and codes, not database IDs
+- Enrolled courses are populated automatically when fetching students
+
+## 🏗️ Project Structure
+
+```
+src/main/java/com/szrthk/Student/Management/
+├── controller/          # REST endpoints
+│   ├── StudentController.java
+│   └── CourseController.java
+├── entity/             # Data models
+│   ├── Student.java
+│   └── Course.java
+├── repositery/         # Database layer
+│   ├── StudentRepo.java
+│   ├── CourseRepo.java
+│   └── ResourceNotFoundException.java
+├── service/           # Business logic
+│   └── StudentService.java
+└── StudentManagementApplication.java
 ```
 
 ## 🤝 Contributing
@@ -313,17 +254,13 @@ java -jar target/Student-Management-0.0.1-SNAPSHOT.jar
 1. Fork the repository
 2. Create a feature branch
 3. Make your changes
-4. Add tests if applicable
+4. Test your changes
 5. Submit a pull request
 
 ## 📝 License
 
-This project is licensed under the MIT License.
-
-## 📞 Support
-
-For questions or issues, please create an issue in the repository.
+This project is open source and available under the MIT License.
 
 ---
 
-**Happy Coding! 🎉**
+**Built by @szrthk with ❤️ using Spring Boot**
