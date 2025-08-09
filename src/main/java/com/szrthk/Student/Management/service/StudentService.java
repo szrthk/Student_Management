@@ -13,10 +13,18 @@ import java.util.List;
 public class StudentService {
     private final StudentRepo studentRepo;
     private final CourseRepo courseRepo;
+    
 
     public StudentService(StudentRepo studentRepo, CourseRepo courseRepo){
         this.studentRepo = studentRepo;
         this.courseRepo = courseRepo;
+    }
+
+    public Student getStudentByName(String name) {
+        Student student = studentRepo.findByName(name)
+                .orElseThrow(() -> new ResourceNotFoundException("Student not found"));
+        populateCourses(student);
+        return student;
     }
 
     // ✅ use rollNumber consistently from here
