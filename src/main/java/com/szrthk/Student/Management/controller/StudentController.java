@@ -68,9 +68,8 @@ public class StudentController {
     public List<Course> getCourses (@PathVariable String rollNumber){
        return studentService.getCourses(rollNumber);
    }
-
-
-
-
-
+   @GetMapping("/name/{name}")
+   public Student getStudentByName(@PathVariable String name){
+    return studentService.getStudentByName(name);
+   }
 }
